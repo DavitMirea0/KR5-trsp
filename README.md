@@ -5,32 +5,47 @@
 **Дисциплина:** Технологии разработки серверных приложений  
 **Преподаватель:** Дворецкий А. Г.  
 **Семестр:** 4, 2025/2026 уч. год  
-**Стек:** Python, FastAPI, Pydantic v2, pytest, pytest-asyncio, WebSockets, Docker
+**Стек:** Python 3.12, FastAPI, Pydantic v2, pytest, pytest-asyncio, WebSockets, Docker, Docker Compose
 
 ---
 
-## Задание 1. Интеграционные тесты для API задач
+## 📋 Содержание
 
-FastAPI приложение для управления задачами с REST API и интеграционными тестами.
+1. [Задание 1. Интеграционные тесты для API задач](#задание-1-интеграционные-тесты-для-api-задач)
+2. [Задание 2. Docker-контейнеризация](#задание-2-docker-контейнеризация)
+3. [Задание 3. WebSocket-комнаты](#задание-3-websocket-комнаты)
+4. [Задание 4. Внедрение зависимостей](#задание-4-внедрение-зависимостей)
+5. [Установка и запуск](#установка-и-запуск)
+6. [Тестирование](#тестирование)
+7. [API Документация](#api-документация)
 
-### Функциональность
+---
 
-- **POST /tasks** — создание задачи (требует заголовок `X-User-Id`)
-- **GET /tasks** — список задач текущего пользователя с фильтрацией по статусу и приоритету
-- **GET /tasks/{task_id}** — получение конкретной задачи
-- **PATCH /tasks/{task_id}/status** — изменение статуса задачи
-- **DELETE /tasks/{task_id}** — удаление задачи
+## Структура проекта
+server_app/
+├── app/
+│ ├── init.py # Инициализация модуля
+│ ├── main.py # Точка входа FastAPI, WebSocket endpoint
+│ ├── dependencies.py # Зависимости (get_current_user, require_admin)
+│ ├── schemas.py # Pydantic модели данных
+│ ├── storage.py # In-memory хранилище задач
+│ ├── routers/
+│ │ ├── init.py
+│ │ ├── tasks.py # Маршруты для работы с задачами (/tasks)
+│ │ ├── users.py # Маршруты для работы с пользователями (/users)
+│ │ └── admin.py # Маршруты для администратора (/admin)
+│ └── websocket/
+│ ├── init.py
+│ └── room_manager.py # Класс RoomManager для управления WebSocket комнатами
+├── tests/
+│ ├── init.py
+│ ├── conftest.py # Фикстуры для тестов
+│ ├── test_tasks.py # Интеграционные тесты для API задач (8 тестов)
+│ ├── test_websocket.py # Тесты для WebSocket чата (6 тестов)
+│ └── test_dependencies_and_routing.py # Тесты роутинга и зависимостей (7 тестов)
+├── Dockerfile # Инструкции для сборки Docker образа
+├── docker-compose.yml # Оркестрация Docker контейнеров
+├── .dockerignore # Исключения для Docker образа
+├── requirements.txt # Зависимости Python
+└── README.md # Документация
 
-### Запуск тестов
-
-```bash
-# Установка зависимостей
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-# Запуск всех тестов
-pytest -v
-
-# Запуск только тестов задач
-pytest tests/test_tasks.py -v
